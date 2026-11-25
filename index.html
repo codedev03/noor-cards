@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Noor Cards — Remembrance in Every Walk of Life</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cinzel:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            twilight: '#120D1D',
+            plum: '#1F1633',
+            obsidian: '#0B0812',
+            lantern: '#F5C16C',
+            amberGlow: '#E09F3E',
+            ivory: '#F8F4EC',
+            emeraldMist: '#2E6F65',
+          },
+          fontFamily: {
+            display: ['Cinzel', 'serif'],
+            arabic: ['Amiri', 'serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    :root {
+      --bg-deep: #120d1d;
+      --bg-plum: #1f1633;
+      --gold: #f5c16c;
+      --ivory: #f8f4ec;
+    }
+
+    body {
+      background-color: var(--bg-deep);
+      color: var(--ivory);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b0812;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #362756;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #f5c16c;
+    }
+
+    /* Atmospheric Hero Gradient & Glow */
+    .hero-sky {
+      background: radial-gradient(circle at 68% 35%, rgba(245, 193, 108, 0.22) 0%, rgba(124, 77, 139, 0.25) 35%, rgba(18, 13, 29, 0.98) 78%),
+                  linear-gradient(180deg, #241738 0%, #160f24 60%, #120d1d 100%);
+    }
+
+    .lantern-halo {
+      box-shadow: 0 0 65px 20px rgba(245, 193, 108, 0.35), 0 0 120px 45px rgba(224, 159, 62, 0.15);
+    }
+
+    /* Ornate Card Frame */
+    .ornate-card {
+      background: linear-gradient(155deg, #271b3d 0%, #150e24 55%, #0e0918 100%);
+      border: 1.5px solid rgba(245, 193, 108, 0.42);
+      box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.85),
+        inset 0 0 0 6px rgba(18, 13, 29, 0.9),
+        inset 0 0 0 7.5px rgba(245, 193, 108, 0.22);
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+      transform-style: preserve-3d;
+    }
+
+    .ornate-card:hover {
+      border-color: rgba(245, 193, 108, 0.85);
+      box-shadow:
+        0 30px 60px -10px rgba(0, 0, 0, 0.9),
+        0 0 35px rgba(245, 193, 108, 0.2),
+        inset 0 0 0 6px rgba(18, 13, 29, 0.9),
+        inset 0 0 0 7.5px rgba(245, 193, 108, 0.45);
+    }
+
+    /* 3D Flip Mechanics */
+    .perspective-1200 {
+      perspective: 1200px;
+    }
+    .flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.75s cubic-bezier(0.23, 1, 0.32, 1);
+      transform-style: preserve-3d;
+    }
+    .flip-inner.is-flipped {
+      transform: rotateY(180deg);
+    }
+    .flip-front,
+    .flip-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: 1.25rem;
+    }
+    .flip-back {
+      transform: rotateY(180deg);
+    }
+
+    /* Specular Sheen Overlay */
+    .card-sheen {
+      background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255, 244, 214, 0.16) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Corner Bevel Diamonds */
+    .corner-gem {
+      width: 10px;
+      height: 10px;
+      background: linear-gradient(135deg, #f5c16c, #b57b28);
+      transform: rotate(45deg);
+      box-shadow: 0 0 10px rgba(245, 193, 108, 0.6);
+    }
+
+    /* Scroll Reveal */
+    .reveal-section {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.85s ease-out, transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Floating Animation */
+    @keyframes floatSlow {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    .animate-float {
+      animation: floatSlow 5.5s ease-in-out infinite;
+    }
+
+    /* Matter.js Physics Arena */
+    #physics-stage {
+      touch-action: none;
+      user-select: none;
+    }
+    .physics-card-dom {
+      position: absolute;
+      top: 0;
+      left: 0;
+      will-change: transform;
+      cursor: grab;
+      user-select: none;
+    }
+    .physics-card-dom:active {
+      cursor: grabbing;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-lantern selection:text-twilight">
+
+  <!-- Top Navigation -->
+  <header class="fixed top-0 inset-x-0 z-50 transition-all duration-300 bg-gradient-to-b from-[#0B0812]/90 via-[#120D1D]/70 to-transparent backdrop-blur-sm">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <a href="#hero" class="flex items-center gap-3 group">
+        <span class="w-3 h-3 rotate-45 bg-lantern inline-block group-hover:scale-125 transition-transform"></span>
+        <span class="font-display font-bold tracking-[0.22em] text-lg text-ivory">NOOR CARDS</span>
+      </a>
+
+      <nav class="hidden md:flex items-center gap-9 text-xs uppercase tracking-[0.2em] text-ivory/80 font-medium">
+        <a href="#journey" class="hover:text-lantern transition-colors">Journey</a>
+        <a href="#showcase" class="hover:text-lantern transition-colors">Cards</a>
+        <a href="#walks" class="hover:text-lantern transition-colors">Walks of Life</a>
+      </nav>
+
+      <button onclick="openDailyVerseModal()" class="px-5 py-2.5 border border-lantern/50 text-lantern text-xs uppercase tracking-[0.18em] font-semibold rounded hover:bg-lantern hover:text-twilight transition-all duration-300">
+        Daily Verse
+      </button>
+    </div>
+  </header>
+
+  <!-- SECTION 1: Atmospheric Layered Parallax Hero -->
+  <section id="hero" class="relative min-h-screen w-full overflow-hidden hero-sky flex items-center">
+    <!-- Particle Canvas -->
+    <canvas id="particle-canvas" class="absolute inset-0 w-full h-full pointer-events-none z-20"></canvas>
+
+    <!-- Parallax Layer 1: Distant Misty Mountains & Arches -->
+    <div data-parallax="0.02" class="parallax-layer absolute inset-0 pointer-events-none opacity-45">
+      <svg viewBox="0 0 1440 900" fill="none" class="w-full h-full object-cover" preserveAspectRatio="xMidYMid slice">
+        <path d="M0 620 L260 360 L540 590 L880 280 L1210 540 L1440 390 L1440 900 L0 900 Z" fill="#2A1B42" />
+        <path d="M-60 720 L380 460 L720 680 L1080 410 L1500 690 L1500 900 L-60 900 Z" fill="#1D1230" />
+      </svg>
+    </div>
+
+    <!-- Parallax Layer 2: Sanctuary Pavilion & Lantern Glow (Left Visual Anchor) -->
+    <div data-parallax="0.045" class="parallax-layer absolute left-[-4%] md:left-[6%] bottom-[12%] w-[340px] md:w-[500px] pointer-events-none z-10">
+      <div class="relative">
+        <!-- Warm Lantern Core -->
+        <div class="absolute left-[46%] top-[44%] w-16 h-16 rounded-full bg-lantern/80 blur-md lantern-halo"></div>
+        <svg viewBox="0 0 500 460" fill="none" class="w-full h-auto drop-shadow-2xl">
+          <!-- Hill -->
+          <path d="M20 440 Q180 280 460 440 Z" fill="#130C21" />
+          <!-- Pavilion Roof -->
+          <path d="M120 210 Q240 165 360 210 Q285 155 240 85 Q195 155 120 210 Z" fill="#1C2742" stroke="#F5C16C" stroke-opacity="0.35" stroke-width="1.5" />
+          <!-- Spire -->
+          <path d="M240 35 L246 90 L234 90 Z" fill="#F5C16C" fill-opacity="0.7" />
+          <!-- Pillars & Warm Interior -->
+          <rect x="175" y="210" width="130" height="95" fill="url(#lanternGrad)" />
+          <rect x="165" y="210" width="8" height="100" fill="#100A1C" />
+          <rect x="307" y="210" width="8" height="100" fill="#100A1C" />
+          <rect x="145" y="305" width="190" height="12" rx="3" fill="#1A122B" />
+          <!-- Hanging Lanterns -->
+          <circle cx="128" cy="226" r="6" fill="#F5C16C" />
+          <circle cx="352" cy="226" r="6" fill="#F5C16C" />
+          <defs>
+            <radialGradient id="lanternGrad" cx="50%" cy="55%" r="55%">
+              <stop offset="0%" stop-color="#FFE3A3" />
+              <stop offset="55%" stop-color="#E09F3E" stop-opacity="0.75" />
+              <stop offset="100%" stop-color="#1A112B" stop-opacity="0.95" />
+            </radialGradient>
+          </defs>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Parallax Layer 3: Foreground Silhouette & Hanging Lantern -->
+    <div data-parallax="0.08" class="parallax-layer absolute inset-x-0 bottom-0 pointer-events-none z-20">
+      <svg viewBox="0 0 1440 220" fill="none" class="w-full h-36 md:h-52" preserveAspectRatio="none">
+        <path d="M0 140 Q320 60 720 155 Q1100 220 1440 110 L1440 220 L0 220 Z" fill="#0D0916" />
+        <path d="M0 175 Q480 210 960 150 Q1240 120 1440 170 L1440 220 L0 220 Z" fill="#120D1D" />
+      </svg>
+    </div>
+
+    <!-- Hero Content -->
+    <div class="relative z-30 max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-12 items-center pt-20">
+      <div class="lg:col-span-6"></div>
+      <div class="lg:col-span-6 text-left space-y-6">
+        <div class="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-lantern/10 border border-lantern/30 text-lantern text-xs uppercase tracking-[0.22em]">
+          <span class="w-1.5 h-1.5 rounded-full bg-lantern animate-pulse"></span>
+          Daily Qur'anic &amp; Goodness Reflections
+        </div>
+
+        <h1 class="font-display font-extrabold text-4xl sm:text-5xl md:text-6xl leading-[1.08] tracking-wide text-ivory drop-shadow-lg">
+          REMEMBRANCE IN EVERY WALK OF LIFE
+        </h1>
+
+        <p class="text-ivory/75 text-base sm:text-lg max-w-xl leading-relaxed font-light">
+          Tactile, physics-driven reminder cards carrying timeless Qur'anic verses and Prophetic goodness for moments of patience, gratitude, speech, and trust.
+        </p>
+
+        <div class="pt-2 flex flex-wrap items-center gap-4">
+          <a href="#showcase" class="px-8 py-4 bg-ivory text-twilight font-display font-bold text-xs uppercase tracking-[0.22em] rounded shadow-[0_10px_30px_rgba(248,244,236,0.2)] hover:bg-lantern hover:scale-[1.02] transition-all duration-300">
+            Explore The Cards
+          </a>
+          <a href="#journey" class="px-6 py-4 border border-ivory/25 text-ivory/90 font-display text-xs uppercase tracking-[0.2em] rounded hover:border-lantern hover:text-lantern transition-colors">
+            Read Story
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 2: Story & Candlelit Fanned Card Spread -->
+  <section id="journey" class="relative py-28 md:py-36 bg-gradient-to-b from-[#120D1D] via-[#171026] to-[#120D1D] overflow-hidden reveal-section">
+    <!-- Subtle Ambient Glow -->
+    <div class="absolute right-[10%] top-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-lantern/10 blur-[110px] pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-14 items-center">
+      <!-- Left Editorial Copy -->
+      <div class="lg:col-span-5 space-y-6">
+        <p class="text-lantern text-xs uppercase tracking-[0.26em] font-semibold">
+          Guidance for Every Step
+        </p>
+        <h2 class="font-display font-bold text-3xl sm:text-5xl leading-[1.12] text-ivory">
+          LIGHT FOR<br />THE HEART
+        </h2>
+        <p class="text-ivory/70 leading-relaxed text-base">
+          Whether you are navigating quiet anxiety, choosing gentle words in anger, or pausing in gratitude after blessing—a single verse remembered at the right moment steady-anchors the soul.
+        </p>
+        <p class="text-ivory/60 leading-relaxed text-sm">
+          Draw, tilt, or toss the cards freely. Flip any card to read the Arabic text, translation, Surah citation, and a grounded reflection you can carry into your day.
+        </p>
+        <div class="pt-3 flex items-center gap-6 text-xs uppercase tracking-[0.2em] text-lantern/80">
+          <span>12 Verified Verses</span>
+          <span class="w-1.5 h-1.5 rotate-45 bg-lantern/50"></span>
+          <span>Interactive 3D Physics</span>
+        </div>
+      </div>
+
+      <!-- Right Fanned-Out Candlelit Card Spread -->
+      <div class="lg:col-span-7 relative h-[400px] sm:h-[440px] flex items-center justify-center perspective-1200" id="spread-stage">
+        <!-- Warm Candle Glow Base -->
+        <div class="absolute bottom-6 w-80 h-16 bg-lantern/25 blur-2xl rounded-full"></div>
+
+        <!-- Fanned Card 1 (Left) -->
+        <div class="spread-card ornate-card absolute w-48 sm:w-56 h-72 sm:h-80 rounded-2xl p-5 flex flex-col justify-between cursor-pointer"
+             style="transform: translateX(-115px) translateY(16px) rotate(-14deg);"
+             onclick="jumpToCard(1)">
+          <div class="flex justify-between items-center">
+            <span class="corner-gem"></span>
+            <span class="text-[10px] uppercase tracking-[0.2em] text-lantern/80">Gratitude</span>
+            <span class="corner-gem"></span>
+          </div>
+          <div class="text-center space-y-2">
+            <p class="font-arabic text-2xl text-lantern leading-loose" dir="rtl">لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ</p>
+            <p class="text-xs text-ivory/75 italic">"If you are grateful, I will surely increase you..."</p>
+          </div>
+          <div class="text-center text-[10px] tracking-[0.2em] uppercase text-ivory/50">Ibrahim 14:7</div>
+        </div>
+
+        <!-- Fanned Card 3 (Right) -->
+        <div class="spread-card ornate-card absolute w-48 sm:w-56 h-72 sm:h-80 rounded-2xl p-5 flex flex-col justify-between cursor-pointer"
+             style="transform: translateX(115px) translateY(16px) rotate(14deg);"
+             onclick="jumpToCard(3)">
+          <div class="flex justify-between items-center">
+            <span class="corner-gem"></span>
+            <span class="text-[10px] uppercase tracking-[0.2em] text-lantern/80">Trust</span>
+            <span class="corner-gem"></span>
+          </div>
+          <div class="text-center space-y-2">
+            <p class="font-arabic text-2xl text-lantern leading-loose" dir="rtl">وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ</p>
+            <p class="text-xs text-ivory/75 italic">"Whoever relies upon Allah — then He is sufficient for him."</p>
+          </div>
+          <div class="text-center text-[10px] tracking-[0.2em] uppercase text-ivory/50">At-Talaq 65:3</div>
+        </div>
+
+        <!-- Fanned Card 2 (Center Elevated) -->
+        <div class="spread-card ornate-card absolute w-52 sm:w-60 h-76 sm:h-84 rounded-2xl p-6 flex flex-col justify-between z-10 cursor-pointer"
+             style="transform: translateY(-10px);"
+             onclick="jumpToCard(0)">
+          <div class="flex justify-between items-center">
+            <span class="corner-gem"></span>
+            <span class="text-[10px] uppercase tracking-[0.22em] text-lantern">Ease &amp; Patience</span>
+            <span class="corner-gem"></span>
+          </div>
+          <div class="text-center space-y-3 my-auto">
+            <div class="w-12 h-12 mx-auto rounded-full border border-lantern/40 flex items-center justify-center bg-lantern/10">
+              <span class="text-lantern text-lg">✦</span>
+            </div>
+            <p class="font-arabic text-2xl sm:text-3xl text-lantern leading-loose" dir="rtl">فَإِنَّ مَعَ الْعُسْرِ يُسْرًا</p>
+            <p class="text-xs sm:text-sm text-ivory/90 font-medium">"For indeed, with hardship will be ease."</p>
+          </div>
+          <div class="text-center text-[10px] tracking-[0.22em] uppercase text-lantern/70">Ash-Sharh 94:5</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 3: Interactive 3-Card Showcase & Matter.js Physics Playground -->
+  <section id="showcase" class="relative py-28 bg-[#160F24] border-y border-lantern/15 reveal-section">
+    <div class="max-w-7xl mx-auto px-6">
+      <!-- Header & Mode Switcher -->
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
+        <div>
+          <p class="text-lantern text-xs uppercase tracking-[0.25em] font-semibold mb-2">Interactive Deck</p>
+          <h2 class="font-display font-bold text-3xl sm:text-4xl text-ivory">THE SACRED REMINDER CARDS</h2>
+          <p class="text-ivory/65 text-sm mt-2">Click the center card to flip for full reflection, or switch to Physics Toss to drag and collide cards.</p>
+        </div>
+
+        <!-- Mode Toggle -->
+        <div class="inline-flex p-1.5 rounded-lg bg-[#0D0916] border border-lantern/25 self-start">
+          <button id="btn-showcase-mode" onclick="setDeckMode('showcase')" class="px-4 py-2 rounded text-xs uppercase tracking-[0.18em] font-semibold bg-lantern text-twilight transition-all">
+            3D Showcase
+          </button>
+          <button id="btn-physics-mode" onclick="setDeckMode('physics')" class="px-4 py-2 rounded text-xs uppercase tracking-[0.18em] font-semibold text-ivory/75 hover:text-ivory transition-all">
+            Free Physics Toss
+          </button>
+        </div>
+      </div>
+
+      <!-- MODE A: 3-Card Ornate Center-Stage Carousel -->
+      <div id="carousel-view" class="relative">
+        <div class="grid grid-cols-1 md:grid-cols-12 items-center gap-6 md:gap-4 min-h-[470px]">
+          <!-- Left Side Card -->
+          <div class="hidden md:flex md:col-span-3 justify-end">
+            <div id="card-slot-prev" onclick="prevCard()" class="ornate-card w-60 h-80 rounded-2xl p-5 flex flex-col justify-between opacity-65 scale-90 hover:opacity-90 hover:scale-95 cursor-pointer transition-all duration-300">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- Center Featured Flippable & Tiltable Card -->
+          <div class="md:col-span-6 flex justify-center perspective-1200">
+            <div id="center-card-wrapper" class="w-full max-w-[360px] h-[460px] cursor-pointer select-none" onclick="toggleFlipCenter()">
+              <div id="center-flip-inner" class="flip-inner">
+                <!-- FRONT -->
+                <div id="center-card-front" class="flip-front ornate-card p-7 flex flex-col justify-between overflow-hidden">
+                  <div class="card-sheen absolute inset-0"></div>
+                  <!-- Top Bevel Header -->
+                  <div class="relative z-10 flex items-center justify-between">
+                    <span class="corner-gem"></span>
+                    <span id="front-category" class="px-3 py-1 rounded-full bg-lantern/15 border border-lantern/30 text-lantern text-[10px] uppercase tracking-[0.22em] font-semibold">
+                      Patience
+                    </span>
+                    <span class="corner-gem"></span>
+                  </div>
+
+                  <!-- Center Emblem & Verse -->
+                  <div class="relative z-10 text-center space-y-5 my-auto">
+                    <div class="w-16 h-16 mx-auto rotate-45 border border-lantern/45 bg-gradient-to-br from-lantern/20 to-transparent flex items-center justify-center shadow-[0_0_25px_rgba(245,193,108,0.2)]">
+                      <span class="-rotate-45 font-display text-lantern text-xl font-bold" id="front-number">01</span>
+                    </div>
+
+                    <p id="front-arabic" class="font-arabic text-3xl sm:text-[32px] text-lantern leading-[1.85] px-1" dir="rtl">
+                      فَإِنَّ مَعَ الْعُسْرِ يُسْرًا
+                    </p>
+
+                    <p id="front-english" class="text-ivory/90 text-sm sm:text-base font-medium leading-relaxed">
+                      "For indeed, with hardship will be ease."
+                    </p>
+                  </div>
+
+                  <!-- Bottom Citation & Flip Prompt -->
+                  <div class="relative z-10 pt-3 border-t border-lantern/15 flex items-center justify-between text-[11px] uppercase tracking-[0.2em]">
+                    <span id="front-ref" class="text-lantern/85 font-semibold">Ash-Sharh 94:5</span>
+                    <span class="text-ivory/50">Tap to Flip ↻</span>
+                  </div>
+                </div>
+
+                <!-- BACK (Reflection & Share) -->
+                <div id="center-card-back" class="flip-back ornate-card p-7 flex flex-col justify-between bg-[#140E22]">
+                  <div class="flex items-center justify-between border-b border-lantern/20 pb-3">
+                    <span id="back-ref" class="font-display text-xs uppercase tracking-[0.22em] text-lantern font-bold">Ash-Sharh 94:5</span>
+                    <span class="text-[10px] uppercase tracking-[0.2em] text-ivory/50">Tap to Return ↺</span>
+                  </div>
+
+                  <div class="space-y-4 my-auto text-left">
+                    <div>
+                      <p class="text-[10px] uppercase tracking-[0.22em] text-lantern/75 mb-1">Walk of Life</p>
+                      <h3 id="back-title" class="font-display text-lg font-bold text-ivory">When Burden Feels Heavy</h3>
+                    </div>
+
+                    <p id="back-reflection" class="text-ivory/80 text-sm leading-relaxed">
+                      Hardship is never isolated from divine relief. Pause, take a steady breath, and look for the quiet openings Allah has already placed alongside the trial.
+                    </p>
+
+                    <div class="p-3.5 rounded-lg bg-twilight/90 border border-lantern/20">
+                      <p class="text-[10px] uppercase tracking-[0.2em] text-lantern mb-1">Practice Today</p>
+                      <p id="back-action" class="text-xs text-ivory/85 leading-relaxed">
+                        Whisper "Alhamdulillah ala kulli hal" (All praise is for Allah in every circumstance) before reacting to a delay.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button onclick="event.stopPropagation(); copyCurrentVerse()" id="copy-btn" class="w-full py-3 rounded bg-lantern text-twilight font-display font-bold text-xs uppercase tracking-[0.2em] hover:bg-ivory transition-colors">
+                    Copy Verse to Share
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Side Card -->
+          <div class="hidden md:flex md:col-span-3 justify-start">
+            <div id="card-slot-next" onclick="nextCard()" class="ornate-card w-60 h-80 rounded-2xl p-5 flex flex-col justify-between opacity-65 scale-90 hover:opacity-90 hover:scale-95 cursor-pointer transition-all duration-300">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Carousel Controls (Matches Reference) -->
+        <div class="mt-10 flex items-center justify-between max-w-3xl mx-auto">
+          <button onclick="prevCard()" class="flex items-center gap-3 text-xs uppercase tracking-[0.22em] text-ivory/75 hover:text-lantern transition-colors group">
+            <span class="w-8 h-8 rounded border border-lantern/35 flex items-center justify-center group-hover:bg-lantern group-hover:text-twilight transition-all">←</span>
+            <span>Previous</span>
+          </button>
+
+          <!-- Pagination Bars -->
+          <div id="carousel-indicators" class="flex items-center gap-2"></div>
+
+          <button onclick="nextCard()" class="flex items-center gap-3 text-xs uppercase tracking-[0.22em] text-ivory/75 hover:text-lantern transition-colors group">
+            <span>Next</span>
+            <span class="w-8 h-8 rounded border border-lantern/35 flex items-center justify-center group-hover:bg-lantern group-hover:text-twilight transition-all">→</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- MODE B: Matter.js 2D Rigid-Body Physics Arena -->
+      <div id="physics-view" class="hidden">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4 p-4 rounded-xl bg-[#0D0916] border border-lantern/20">
+          <p class="text-xs text-ivory/75">
+            <span class="text-lantern font-semibold">Physics Active:</span> Grab, drag, flick, and collide cards against each other.
+          </p>
+          <div class="flex flex-wrap items-center gap-3">
+            <button onclick="toggleZeroGravity()" id="gravity-btn" class="px-3.5 py-1.5 rounded border border-lantern/40 text-lantern text-xs uppercase tracking-[0.16em] hover:bg-lantern hover:text-twilight transition-colors">
+              Zero Gravity: Off
+            </button>
+            <button onclick="scatterPhysicsCards()" class="px-3.5 py-1.5 rounded bg-lantern/15 border border-lantern/40 text-ivory text-xs uppercase tracking-[0.16em] hover:bg-lantern hover:text-twilight transition-colors">
+              Scatter Impulse
+            </button>
+            <button onclick="resetPhysicsArena()" class="px-3.5 py-1.5 rounded border border-ivory/25 text-ivory/80 text-xs uppercase tracking-[0.16em] hover:border-ivory transition-colors">
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <div id="physics-stage" class="relative w-full h-[540px] rounded-2xl bg-[#0D0916] border border-lantern/25 overflow-hidden shadow-inner">
+          <!-- Matter.js DOM-synced cards spawn here -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 4: Feature Highlight — Walks of Life Filter & Ornate Frame -->
+  <section id="walks" class="relative py-28 md:py-36 bg-gradient-to-b from-[#120D1D] to-[#0B0812] overflow-hidden reveal-section">
+    <div class="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-14 items-center">
+      <!-- Left Filter & Copy -->
+      <div class="lg:col-span-6 space-y-6">
+        <p class="text-lantern text-xs uppercase tracking-[0.25em] font-semibold">Practical Goodness</p>
+        <h2 class="font-display font-bold text-3xl sm:text-5xl leading-[1.12] text-ivory">
+          TIMELESS VERSES FOR DAILY TRIALS
+        </h2>
+        <p class="text-ivory/70 text-base leading-relaxed">
+          Select a walk of life below to focus on a verse tailored to your current moment, then send it directly to the interactive stage or copy it for a friend.
+        </p>
+
+        <!-- Category Pills -->
+        <div id="category-pills" class="flex flex-wrap gap-2.5 pt-2">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Matching Verses List -->
+        <div id="filtered-verse-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Right Ornate Glowing Feature Frame (Matches Reference Frame 5) -->
+      <div class="lg:col-span-6 relative flex items-center justify-center">
+        <!-- Floating Golden Orbs -->
+        <div class="absolute -top-6 left-10 w-5 h-5 rounded-full bg-lantern/70 blur-[2px] animate-float"></div>
+        <div class="absolute bottom-8 right-8 w-7 h-7 rounded-full bg-lantern/50 blur-[3px] animate-float" style="animation-delay: 1.5s;"></div>
+        <div class="absolute top-1/2 -left-4 w-3 h-3 rounded-full bg-ivory/60 animate-float" style="animation-delay: 2.8s;"></div>
+
+        <!-- Large Ornate Frame -->
+        <div class="relative w-full max-w-md ornate-card rounded-2xl p-8 sm:p-10 text-center space-y-6">
+          <div class="flex items-center justify-between">
+            <span class="corner-gem"></span>
+            <span id="feature-badge" class="text-xs uppercase tracking-[0.25em] text-lantern font-semibold">Patience &amp; Ease</span>
+            <span class="corner-gem"></span>
+          </div>
+
+          <div class="py-6 px-4 rounded-xl bg-[#0D0916]/80 border border-lantern/20 space-y-5">
+            <p id="feature-arabic" class="font-arabic text-3xl sm:text-4xl text-lantern leading-[1.9]" dir="rtl">
+              فَإِنَّ مَعَ الْعُسْرِ يُسْرًا
+            </p>
+            <p id="feature-english" class="text-ivory text-base sm:text-lg font-medium leading-relaxed">
+              "For indeed, with hardship will be ease."
+            </p>
+            <p id="feature-ref" class="text-xs uppercase tracking-[0.22em] text-lantern/80 font-display">
+              Surah Ash-Sharh • 94:5
+            </p>
+          </div>
+
+          <p id="feature-reflection" class="text-sm text-ivory/75 leading-relaxed">
+            Hardship is never isolated from divine relief. Pause, take a steady breath, and look for the quiet openings Allah has already placed alongside the trial.
+          </p>
+
+          <div class="pt-2 flex justify-center gap-4">
+            <button onclick="loadFeatureIntoCarousel()" class="px-6 py-3 bg-ivory text-twilight font-display font-bold text-xs uppercase tracking-[0.2em] rounded hover:bg-lantern transition-colors">
+              Open in 3D Deck
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-12 bg-[#0B0812] border-t border-lantern/15 text-center space-y-3 px-6">
+    <div class="flex items-center justify-center gap-2.5">
+      <span class="w-2.5 h-2.5 rotate-45 bg-lantern inline-block"></span>
+      <span class="font-display font-bold tracking-[0.24em] text-sm text-ivory">NOOR CARDS</span>
+    </div>
+    <p class="text-xs text-ivory/50 max-w-md mx-auto">
+      Built for quiet daily reflection. Share a verse with someone walking through a heavy day.
+    </p>
+  </footer>
+
+  <!-- Daily Verse Quick Modal -->
+  <div id="daily-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-md p-4" onclick="closeDailyVerseModal()">
+    <div class="ornate-card max-w-lg w-full rounded-2xl p-8 text-center space-y-6 relative" onclick="event.stopPropagation()">
+      <button onclick="closeDailyVerseModal()" class="absolute top-5 right-5 text-ivory/60 hover:text-lantern text-lg">✕</button>
+      <p class="text-xs uppercase tracking-[0.26em] text-lantern font-semibold">Today's Drawn Reminder</p>
+      <p id="modal-arabic" class="font-arabic text-3xl sm:text-4xl text-lantern leading-[1.9]" dir="rtl"></p>
+      <p id="modal-english" class="text-ivory text-base sm:text-lg font-medium leading-relaxed"></p>
+      <p id="modal-ref" class="text-xs uppercase tracking-[0.22em] text-lantern/80 font-display"></p>
+      <p id="modal-reflection" class="text-sm text-ivory/75 leading-relaxed"></p>
+      <div class="pt-2 flex justify-center gap-3">
+        <button onclick="drawRandomModalVerse()" class="px-5 py-2.5 border border-lantern/45 text-lantern text-xs uppercase tracking-[0.18em] rounded hover:bg-lantern hover:text-twilight transition-colors">
+          Draw Another
+        </button>
+        <button onclick="closeDailyVerseModal()" class="px-5 py-2.5 bg-ivory text-twilight font-bold text-xs uppercase tracking-[0.18em] rounded hover:bg-lantern transition-colors">
+          Carry With Me
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 px-5 py-3 rounded-lg bg-lantern text-twilight font-display font-bold text-xs uppercase tracking-[0.18em] shadow-2xl translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+    Verse Copied to Clipboard
+  </div>
+
+  <script>
+    // 1. Curated Dataset of 12 Authentic Qur'anic Verses for All Walks of Life
+    const VERSES = [
+      {
+        id: 1,
+        category: 'Patience',
+        title: 'When Burden Feels Heavy',
+        arabic: 'فَإِنَّ مَعَ الْعُسْرِ يُسْرًا',
+        english: 'For indeed, with hardship will be ease.',
+        ref: 'Ash-Sharh 94:5',
+        reflection: 'Hardship is never isolated from divine relief. Pause, take a steady breath, and look for the quiet openings Allah has already placed alongside the trial.',
+        action: 'Whisper "Alhamdulillah ala kulli hal" before reacting to a delay or setback today.'
+      },
+      {
+        id: 2,
+        category: 'Gratitude',
+        title: 'Recognizing Quiet Blessings',
+        arabic: 'لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ',
+        english: 'If you are grateful, I will surely increase you [in favor].',
+        ref: 'Ibrahim 14:7',
+        reflection: 'Gratitude transforms ordinary moments into abundance. Naming small blessings trains the heart to notice Allah’s continuous care.',
+        action: 'Name three unseen blessings you enjoyed this morning—breath, sight, and safety.'
+      },
+      {
+        id: 3,
+        category: 'Speech & Character',
+        title: 'Speaking With Gentleness',
+        arabic: 'وَقُولُوا لِلنَّاسِ حُسْنًا',
+        english: 'And speak to people good [words].',
+        ref: 'Al-Baqarah 2:83',
+        reflection: 'Good speech softens guarded hearts and preserves dignity. Every conversation is an opportunity to leave behind peace rather than friction.',
+        action: 'Offer a sincere, kind word to someone serving or working around you today.'
+      },
+      {
+        id: 4,
+        category: 'Trust in Allah',
+        title: 'Letting Go of Overwhelm',
+        arabic: 'وَمَن يَتَوَكَّلْ عَلَى اللَّهِ فَهُوَ حَسْبُهُ',
+        english: 'And whoever relies upon Allah — then He is sufficient for him.',
+        ref: 'At-Talaq 65:3',
+        reflection: 'True reliance means doing your honest best and releasing the outcome to the One who governs all affairs with wisdom.',
+        action: 'Write down one worry outside your control and consciously entrust it to Allah.'
+      },
+      {
+        id: 5,
+        category: 'Family',
+        title: 'Mercy Toward Parents',
+        arabic: 'وَقُل رَّبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا',
+        english: 'And say, "My Lord, have mercy upon them as they brought me up [when I was] small."',
+        ref: 'Al-Isra 17:24',
+        reflection: 'Humility and tenderness toward parents and elders bring barakah into a home and soften the hardest of hearts.',
+        action: 'Call, message, or make sincere du’a for your parents right now.'
+      },
+      {
+        id: 6,
+        category: 'Patience',
+        title: 'Seeking Strength in Prayer',
+        arabic: 'يَا أَيُّهَا الَّذِينَ آمَنُوا اسْتَعِينُوا بِالصَّبْرِ وَالصَّلَاةِ',
+        english: 'O you who have believed, seek help through patience and prayer.',
+        ref: 'Al-Baqarah 2:153',
+        reflection: 'Patience is active steadiness, not passive despair. Stepping onto the prayer mat resets perspective when life accelerates.',
+        action: 'Pray your next Salah unhurriedly, lengthening your sujood to unburden your heart.'
+      },
+      {
+        id: 7,
+        category: 'Speech & Character',
+        title: 'Repelling Harshness With Goodness',
+        arabic: 'ادْفَعْ بِالَّتِي هِيَ أَحْسَنُ',
+        english: 'Repel [evil] by that [deed] which is better.',
+        ref: 'Fussilat 41:34',
+        reflection: 'Answering irritation with composure breaks the cycle of hostility and protects your inner tranquility.',
+        action: 'Choose silence or calm grace if someone speaks sharply to you today.'
+      },
+      {
+        id: 8,
+        category: 'Trust in Allah',
+        title: 'Peace Through Remembrance',
+        arabic: 'أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ',
+        english: 'Unquestionably, by the remembrance of Allah hearts are assured.',
+        ref: 'Ar-Ra’d 13:28',
+        reflection: 'Restlessness fades when the heart reconnects with its Creator. Even a minute of quiet dhikr restores clarity.',
+        action: 'Repeat "SubhanAllahi wa bihamdihi" 33 times while walking or commuting.'
+      },
+      {
+        id: 9,
+        category: 'Gratitude',
+        title: 'Contentment in Provision',
+        arabic: 'وَلَسَوْفَ يُعْطِيكَ رَبُّكَ فَتَرْضَىٰ',
+        english: 'And your Lord is going to give you, and you will be satisfied.',
+        ref: 'Ad-Duha 93:5',
+        reflection: 'What is written for you will never miss you, and Allah’s generosity always exceeds what we imagine in moments of lack.',
+        action: 'Give a small, hidden charity today as a mark of trust in Allah’s provision.'
+      },
+      {
+        id: 10,
+        category: 'Family',
+        title: 'Tranquility in Companionship',
+        arabic: 'وَجَعَلَ بَيْنَكُم مَّوَدَّةً وَرَحْمَةً',
+        english: 'And He placed between you affection and mercy.',
+        ref: 'Ar-Rum 30:21',
+        reflection: 'Healthy bonds thrive on mercy—overlooking minor faults and prioritizing compassion over winning arguments.',
+        action: 'Express appreciation to a family member or spouse for something they usually do unnoticed.'
+      },
+      {
+        id: 11,
+        category: 'Speech & Character',
+        title: 'Integrity in Every Affair',
+        arabic: 'إِنَّ اللَّهَ يُحِبُّ الْمُحْسِنِينَ',
+        english: 'Indeed, Allah loves the doers of good.',
+        ref: 'Al-Baqarah 2:195',
+        reflection: 'Ihsan means bringing excellence, honesty, and care to your craft and conduct even when nobody else is watching.',
+        action: 'Complete one task today with extra care and sincerity solely for Allah’s pleasure.'
+      },
+      {
+        id: 12,
+        category: 'Patience',
+        title: 'Never Despairing of Mercy',
+        arabic: 'لَا تَقْنَطُوا مِن رَّحْمَةِ اللَّهِ',
+        english: 'Do not despair of the mercy of Allah.',
+        ref: 'Az-Zumar 39:53',
+        reflection: 'No mistake is larger than Allah’s forgiveness. Every breath is an open door to turn back and begin anew.',
+        action: 'Say "Astaghfirullah" with a hopeful heart and let go of past regret.'
+      }
+    ];
+
+    let currentIndex = 0;
+    let isFlipped = false;
+    let featureVerseIndex = 0;
+    let selectedCategory = 'All';
+
+    // 2. Render 3-Card Carousel
+    function renderCarousel() {
+      const total = VERSES.length;
+      const prevIdx = (currentIndex - 1 + total) % total;
+      const nextIdx = (currentIndex + 1) % total;
+
+      const current = VERSES[currentIndex];
+      const prev = VERSES[prevIdx];
+      const next = VERSES[nextIdx];
+
+      // Reset flip state smoothly when switching cards
+      isFlipped = false;
+      document.getElementById('center-flip-inner').classList.remove('is-flipped');
+
+      // Populate Center Front
+      document.getElementById('front-category').textContent = current.category;
+      document.getElementById('front-number').textContent = String(current.id).padStart(2, '0');
+      document.getElementById('front-arabic').textContent = current.arabic;
+      document.getElementById('front-english').textContent = `"${current.english}"`;
+      document.getElementById('front-ref').textContent = current.ref;
+
+      // Populate Center Back
+      document.getElementById('back-ref').textContent = current.ref;
+      document.getElementById('back-title').textContent = current.title;
+      document.getElementById('back-reflection').textContent = current.reflection;
+      document.getElementById('back-action').textContent = current.action;
+
+      // Populate Side Cards
+      document.getElementById('card-slot-prev').innerHTML = buildSideCardHTML(prev);
+      document.getElementById('card-slot-next').innerHTML = buildSideCardHTML(next);
+
+      // Update Pagination Bars
+      const indicators = document.getElementById('carousel-indicators');
+      indicators.innerHTML = VERSES.map((_, idx) => `
+        <button onclick="goToCard(${idx})" aria-label="Card ${idx + 1}"
+          class="h-1.5 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-8 bg-lantern' : 'w-2 bg-ivory/25 hover:bg-ivory/50'}">
+        </button>
+      `).join('');
+    }
+
+    function buildSideCardHTML(item) {
+      return `
+        <div class="flex justify-between items-center">
+          <span class="corner-gem"></span>
+          <span class="text-[9px] uppercase tracking-[0.2em] text-lantern/75">${item.category}</span>
+          <span class="corner-gem"></span>
+        </div>
+        <div class="text-center space-y-3 my-auto">
+          <p class="font-arabic text-xl text-lantern leading-relaxed" dir="rtl">${item.arabic}</p>
+          <p class="text-[11px] text-ivory/70 line-clamp-2">"${item.english}"</p>
+        </div>
+        <div class="text-center text-[10px] tracking-[0.2em] uppercase text-ivory/45">${item.ref}</div>
+      `;
+    }
+
+    function nextCard() {
+      currentIndex = (currentIndex + 1) % VERSES.length;
+      renderCarousel();
+    }
+
+    function prevCard() {
+      currentIndex = (currentIndex - 1 + VERSES.length) % VERSES.length;
+      renderCarousel();
+    }
+
+    function goToCard(index) {
+      currentIndex = index;
+      renderCarousel();
+    }
+
+    function jumpToCard(index) {
+      currentIndex = index;
+      renderCarousel();
+      document.getElementById('showcase').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function toggleFlipCenter() {
+      isFlipped = !isFlipped;
+      document.getElementById('center-flip-inner').classList.toggle('is-flipped', isFlipped);
+    }
+
+    function copyCurrentVerse() {
+      const v = VERSES[currentIndex];
+      const text = `${v.arabic}\n"${v.english}" — (${v.ref})\n\nShared via Noor Cards`;
+      navigator.clipboard.writeText(text).then(() => showToast('Verse Copied to Clipboard'));
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => {
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2400);
+    }
+
+    // 3. 3D Spring Tilt & Specular Sheen on Center Card
+    const centerWrapper = document.getElementById('center-card-wrapper');
+    const centerFront = document.getElementById('center-card-front');
+
+    centerWrapper.addEventListener('mousemove', (e) => {
+      const rect = centerWrapper.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * -10;
+      const rotateY = ((x - centerX) / centerX) * 10;
+
+      centerWrapper.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      centerFront.style.setProperty('--mx', `${(x / rect.width) * 100}%`);
+      centerFront.style.setProperty('--my', `${(y / rect.height) * 100}%`);
+    });
+
+    centerWrapper.addEventListener('mouseleave', () => {
+      centerWrapper.style.transform = 'rotateX(0deg) rotateY(0deg)';
+    });
+
+    // Swipe support on mobile for center card
+    let touchStartX = 0;
+    centerWrapper.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+
+    centerWrapper.addEventListener('touchend', (e) => {
+      const diff = e.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(diff) > 45) {
+        diff < 0 ? nextCard() : prevCard();
+      }
+    }, { passive: true });
+
+    // 4. Walks of Life Filter & Feature Highlight
+    function initWalksSection() {
+      const categories = ['All', 'Patience', 'Gratitude', 'Speech & Character', 'Family', 'Trust in Allah'];
+      const pillsContainer = document.getElementById('category-pills');
+
+      pillsContainer.innerHTML = categories.map(cat => `
+        <button onclick="selectCategory('${cat}')"
+          class="cat-pill px-4 py-2 rounded-full text-xs uppercase tracking-[0.16em] border transition-all ${cat === selectedCategory ? 'bg-lantern text-twilight border-lantern font-bold' : 'bg-transparent text-ivory/75 border-ivory/20 hover:border-lantern/60'}">
+          ${cat}
+        </button>
+      `).join('');
+
+      renderFilteredList();
+      updateFeatureFrame(VERSES[featureVerseIndex]);
+    }
+
+    function selectCategory(cat) {
+      selectedCategory = cat;
+      initWalksSection();
+      const filtered = cat === 'All' ? VERSES : VERSES.filter(v => v.category === cat);
+      if (filtered.length > 0) {
+        featureVerseIndex = VERSES.findIndex(v => v.id === filtered[0].id);
+        updateFeatureFrame(filtered[0]);
+      }
+    }
+
+    function renderFilteredList() {
+      const filtered = selectedCategory === 'All' ? VERSES.slice(0, 6) : VERSES.filter(v => v.category === selectedCategory);
+      const listEl = document.getElementById('filtered-verse-list');
+
+      listEl.innerHTML = filtered.map(v => `
+        <button onclick="previewFeatureVerse(${v.id})"
+          class="text-left p-4 rounded-xl bg-[#160F24] border border-lantern/15 hover:border-lantern/60 transition-all group">
+          <div class="flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-lantern/80 mb-1">
+            <span>${v.category}</span>
+            <span>${v.ref}</span>
+          </div>
+          <p class="font-display text-sm font-semibold text-ivory group-hover:text-lantern transition-colors">${v.title}</p>
+        </button>
+      `).join('');
+    }
+
+    function previewFeatureVerse(id) {
+      const idx = VERSES.findIndex(v => v.id === id);
+      if (idx !== -1) {
+        featureVerseIndex = idx;
+        updateFeatureFrame(VERSES[idx]);
+      }
+    }
+
+    function updateFeatureFrame(v) {
+      document.getElementById('feature-badge').textContent = v.category;
+      document.getElementById('feature-arabic').textContent = v.arabic;
+      document.getElementById('feature-english').textContent = `"${v.english}"`;
+      document.getElementById('feature-ref').textContent = `Surah ${v.ref}`;
+      document.getElementById('feature-reflection').textContent = v.reflection;
+    }
+
+    function loadFeatureIntoCarousel() {
+      setDeckMode('showcase');
+      jumpToCard(featureVerseIndex);
+    }
+
+    // 5. Daily Verse Modal
+    function openDailyVerseModal() {
+      drawRandomModalVerse();
+      const modal = document.getElementById('daily-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeDailyVerseModal() {
+      const modal = document.getElementById('daily-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function drawRandomModalVerse() {
+      const v = VERSES[Math.floor(Math.random() * VERSES.length)];
+      document.getElementById('modal-arabic').textContent = v.arabic;
+      document.getElementById('modal-english').textContent = `"${v.english}"`;
+      document.getElementById('modal-ref').textContent = v.ref;
+      document.getElementById('modal-reflection').textContent = v.reflection;
+    }
+
+    // 6. Matter.js 2D Rigid-Body Physics Arena
+    let physicsEngine = null;
+    let physicsRunner = null;
+    let physicsBodies = [];
+    let zeroGravity = false;
+    let physicsInitialized = false;
+
+    function setDeckMode(mode) {
+      const carouselView = document.getElementById('carousel-view');
+      const physicsView = document.getElementById('physics-view');
+      const btnShowcase = document.getElementById('btn-showcase-mode');
+      const btnPhysics = document.getElementById('btn-physics-mode');
+
+      if (mode === 'showcase') {
+        carouselView.classList.remove('hidden');
+        physicsView.classList.add('hidden');
+        btnShowcase.classList.add('bg-lantern', 'text-twilight');
+        btnShowcase.classList.remove('text-ivory/75');
+        btnPhysics.classList.remove('bg-lantern', 'text-twilight');
+        btnPhysics.classList.add('text-ivory/75');
+      } else {
+        carouselView.classList.add('hidden');
+        physicsView.classList.remove('hidden');
+        btnPhysics.classList.add('bg-lantern', 'text-twilight');
+        btnPhysics.classList.remove('text-ivory/75');
+        btnShowcase.classList.remove('bg-lantern', 'text-twilight');
+        btnShowcase.classList.add('text-ivory/75');
+
+        if (!physicsInitialized) {
+          initPhysicsArena();
+        }
+      }
+    }
+
+    function initPhysicsArena() {
+      physicsInitialized = true;
+      const stage = document.getElementById('physics-stage');
+      stage.innerHTML = '';
+      physicsBodies = [];
+
+      const { Engine, Runner, Bodies, Composite, Mouse, MouseConstraint, Events, Body } = Matter;
+      physicsEngine = Engine.create();
+      physicsEngine.gravity.y = zeroGravity ? 0 : 0.75;
+
+      const width = stage.clientWidth;
+      const height = stage.clientHeight;
+      const wallThickness = 60;
+
+      // Boundary Walls
+      const walls = [
+        Bodies.rectangle(width / 2, height + wallThickness / 2, width + 100, wallThickness, { isStatic: true, restitution: 0.7 }),
+        Bodies.rectangle(width / 2, -wallThickness / 2, width + 100, wallThickness, { isStatic: true, restitution: 0.7 }),
+        Bodies.rectangle(-wallThickness / 2, height / 2, wallThickness, height + 100, { isStatic: true, restitution: 0.7 }),
+        Bodies.rectangle(width + wallThickness / 2, height / 2, wallThickness, height + 100, { isStatic: true, restitution: 0.7 })
+      ];
+      Composite.add(physicsEngine.world, walls);
+
+      // Spawn 7 interactive physics cards
+      const cardW = 175;
+      const cardH = 225;
+      const subset = VERSES.slice(0, 7);
+
+      subset.forEach((v, idx) => {
+        const startX = 120 + (idx % 4) * ((width - 240) / 3);
+        const startY = 120 + Math.floor(idx / 4) * 160;
+        const body = Bodies.rectangle(startX, startY, cardW, cardH, {
+          chamfer: { radius: 14 },
+          restitution: 0.68,
+          friction: 0.12,
+          frictionAir: 0.015,
+          angle: (Math.random() - 0.5) * 0.35
+        });
+
+        const el = document.createElement('div');
+        el.className = 'physics-card-dom ornate-card rounded-2xl p-4 flex flex-col justify-between';
+        el.style.width = `${cardW}px`;
+        el.style.height = `${cardH}px`;
+        el.innerHTML = `
+          <div class="flex justify-between items-center">
+            <span class="corner-gem" style="width:7px;height:7px;"></span>
+            <span class="text-[9px] uppercase tracking-[0.18em] text-lantern">${v.category}</span>
+            <span class="corner-gem" style="width:7px;height:7px;"></span>
+          </div>
+          <div class="text-center space-y-2 my-auto">
+            <p class="font-arabic text-lg text-lantern leading-relaxed" dir="rtl">${v.arabic}</p>
+            <p class="text-[10px] text-ivory/80 line-clamp-3">"${v.english}"</p>
+          </div>
+          <div class="text-center text-[9px] tracking-[0.18em] uppercase text-ivory/50">${v.ref}</div>
+        `;
+
+        stage.appendChild(el);
+        physicsBodies.push({ body, el, w: cardW, h: cardH });
+        Composite.add(physicsEngine.world, body);
+      });
+
+      // Mouse & Touch Drag Constraint
+      const mouse = Mouse.create(stage);
+      const mouseConstraint = MouseConstraint.create(physicsEngine, {
+        mouse: mouse,
+        constraint: {
+          stiffness: 0.18,
+          render: { visible: false }
+        }
+      });
+      Composite.add(physicsEngine.world, mouseConstraint);
+
+      // Sync DOM elements to Matter.js Bodies
+      Events.on(physicsEngine, 'afterUpdate', () => {
+        physicsBodies.forEach(({ body, el, w, h }) => {
+          const x = body.position.x - w / 2;
+          const y = body.position.y - h / 2;
+          el.style.transform = `translate3d(${x}px, ${y}px, 0) rotate(${body.angle}rad)`;
+        });
+      });
+
+      physicsRunner = Runner.create();
+      Runner.run(physicsRunner, physicsEngine);
+    }
+
+    function toggleZeroGravity() {
+      if (!physicsEngine) return;
+      zeroGravity = !zeroGravity;
+      physicsEngine.gravity.y = zeroGravity ? 0 : 0.75;
+      document.getElementById('gravity-btn').textContent = `Zero Gravity: ${zeroGravity ? 'On' : 'Off'}`;
+      if (zeroGravity) scatterPhysicsCards();
+    }
+
+    function scatterPhysicsCards() {
+      if (!physicsBodies.length) return;
+      physicsBodies.forEach(({ body }) => {
+        Matter.Body.applyForce(body, body.position, {
+          x: (Math.random() - 0.5) * 0.14,
+          y: -0.12 - Math.random() * 0.08
+        });
+        Matter.Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.12);
+      });
+    }
+
+    function resetPhysicsArena() {
+      if (physicsRunner) Matter.Runner.stop(physicsRunner);
+      physicsInitialized = false;
+      initPhysicsArena();
+    }
+
+    // 7. Hero Parallax & Floating Golden Light Motes
+    const heroSection = document.getElementById('hero');
+    const parallaxLayers = document.querySelectorAll('.parallax-layer');
+
+    heroSection.addEventListener('mousemove', (e) => {
+      const x = (e.clientX - window.innerWidth / 2);
+      const y = (e.clientY - window.innerHeight / 2);
+      parallaxLayers.forEach(layer => {
+        const speed = parseFloat(layer.getAttribute('data-parallax')) || 0.03;
+        layer.style.transform = `translate3d(${x * speed}px, ${y * speed}px, 0)`;
+      });
+    });
+
+    // Particle Canvas
+    const canvas = document.getElementById('particle-canvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    for (let i = 0; i < 42; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2.4 + 0.8,
+        dx: (Math.random() - 0.5) * 0.35,
+        dy: -Math.random() * 0.45 - 0.15,
+        alpha: Math.random() * 0.65 + 0.2
+      });
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.y < -10) p.y = canvas.height + 10;
+        if (p.x < -10) p.x = canvas.width + 10;
+        if (p.x > canvas.width + 10) p.x = -10;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(245, 193, 108, ${p.alpha})`;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = '#F5C16C';
+        ctx.fill();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // 8. Scroll Reveal Observer
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal-section').forEach(sec => observer.observe(sec));
+
+    // Initialize App
+    renderCarousel();
+    initWalksSection();
+  </script>
+</body>
+</html>
